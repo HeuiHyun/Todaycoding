@@ -36,3 +36,130 @@ answer = raw.drop([0]) # 나머지 내용을 나타내준다 axis 0은 행 axis 
 answer
 
 answer.info()
+
+Q1 What is your age (# years)?
+
+question["Q1"]
+
+answer["Q1"].value_counts(normalize = True) # 빈도수 확인 가능(value_counts()) normalize = True 비율을 알수있음
+
+answer["Q1"].value_counts().sort_index() # 인덱스 순으로 나열
+answer["Q1"].value_counts().sort_index().plot() # 그래프도 가능
+
+# sns.countplot(data=answer,x="Q1") # 정렬이 안되있음.
+sns.countplot(data=answer.sort_values("Q1"),x="Q1")# 큰 순으로 정렬한 모양
+sns.countplot(data=answer.sort_values("Q1"),x="Q1") .set_title(question["Q1"]) # 제목 생성
+
+Q1 = answer['Q1'].value_counts().sort_index()
+sns.countplot(data=answer.sort_values("Q1"), x="Q1", 
+              palette="Blues_r").set_title(question["Q1"]) # 팔레트 코드로 색깔을 진한순부터 옅은순으로 생성(Blues_r)
+
+Q2 What is your gender? - Selected Choice
+question_no = "Q2"
+Q2 = answer[question_no].value_counts()
+Q2
+
+sns.countplot(data=answer, 
+              y=question_no).set_title(question[question_no])
+
+q1q2 = pd.crosstab(answer["Q1"], answer["Q2"])
+q1q2[["Man", "Woman"]].plot.bar(rot=0)
+
+q1q2[["Man", "Woman"]].sort_index(ascending=False).plot.barh(figsize=(10, 6), title="Age & Gender")
+
+plt.figure(figsize=(10, 6))
+sns.countplot(data=answer.sort_values("Q1"), x="Q1", hue="Q2").set_title("Age & Gender")
+
+Q3 In which country do you currently reside?
+
+# answer["Q1"].value_counts().index # 빈도수가 많은 순서대로 index만 뽑음
+q1_cols=answer["Q1"].value_counts().sort_index().index.tolist()# 인덱스값순으로 정렬해서 인덱스만 뽑고 리스트형식으로 바꿔줌
+q1_cols
+
+def show_countplot_by_qno(qno,fsize=(10,6),order=None): # 함수 정의 fsize = 그래프 크기 order 값이 없으면 빈도수 높은순으로 정렬
+    if not order:
+        order= answer[qno].value_counts().index # 빈도수가 높은 순으로 정렬
+    
+    plt.figure(figsize=fsize) # 그래프 사이즈 정의 mapplot
+    sns.countplot(data=answer, y=qno,
+                  order=order , palette="Blues_r",
+                 ).set_title(question[qno]) # 제목 추가set_title()
+    
+show_countplot_by_qno("Q6") # fsize 변경 가능! q1~q6까지 가능
+
+# 오늘의 코딩 위와 같은함수
+def show_countplot_by_qno(qno, fsize=(10, 6), order=None):
+    """
+    qno : question_no, ex) Q12
+    fsize : figsize default (10, 6)
+    order : optional order list, default value_counts().index
+    """
+    if not order :
+        order = answer[qno].value_counts().index
+        
+    plt.figure(figsize=fsize)
+    sns.countplot(data=answer, 
+                  y=qno,
+                  order=order,
+                  palette="Blues_r"
+                 ).set_title(question[qno])
+show_countplot_by_qno? # ?하면 함수의 내용을 알 수 있음.
+show_countplot_by_qno("Q3", fsize=(12, 12))
+
+Q4 🎓 What is the highest level of formal education that you have attained or plan to attain within the next 2 years?
+
+show_countplot_by_qno("Q4")
+
+Q5 Select the title most similar to your current role (or most recent title if retired):
+
+show_countplot_by_qno("Q5")
+
+Q6 For how many years have you been writing code and/or programming?
+
+show_countplot_by_qno("Q6")
+q6_cols = ['I have never written code', '< 1 years', '1-2 years', '3-5 years', '5-10 years',  
+       '10-20 years', '20+ years']
+show_countplot_by_qno("Q6", order=q6_cols)
+
+Q7 What programming languages do you use on a regular basis? (Select all that apply)
+🐼 pandas filter & describe 🗂 # main point Q7부터는 다중으로 대답이 있기때문에 다르게 분석
+
+question.filter(regex="Q7")[0].split("-")[0] # 필터를 사용하고 regex를 이용 Q7의 내용을 확인하고 [0]은 그중 첫번째 split을 통하여 잘라준뒤 첫 번째 값 호출
+question.filter(regex="Q7")[0].split("-")[0]
+answer_Q7 = answer.filter(regex="Q7") # pandas의 filter를 이용 regex는 regularexpresion의 약자로 정규표현식 사용
+answer_Q7
+answer_Q7.notnull() # 결측치는 False 아닌값은 True
+answer_Q7_desc = answer_Q7.describe() # describe 기술통계를 알려줌 결측치를 제외
+answer_Q7_desc.loc[["top","count"]].T.set_index("top").plot.bar() 
+# top,count를 리스트 형태로 loc로 인덱싱하고 .T(trans)로 행과열 교체 후 index top을 부른 후 그래프한 것 
+# .T를 해준 이유는 index top을 부르면 열의 위치가 아니고 오류가 나기 때문에 바꿔준다.
+answer_Q7_desc = answer_Q7.describe()
+answer_Q7_desc
+answer_Q7_count = answer_Q7_desc.loc[["top", "count"]].T
+answer_Q7_count = answer_Q7_count.set_index("top")
+answer_Q7_count = answer_Q7_count.sort_values("count", ascending=False)
+answer_Q7_count
+q7_title=question.filter(regex="Q7")[0].split("-")[0] # 제목 가져오기
+sns.barplot(data=answer_Q7_count, y=answer_Q7_count.index,x="count",palette="Reds_r").set_title(q7_title)
+
+How to get title in multiple choice question
+q7_title = question.filter(regex="Q7")[0].split("-")[0]
+sns.barplot(data=answer_Q7_count, 
+            y=answer_Q7_count.index, x="count", palette="Blues_r").set_title(q7_title)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
