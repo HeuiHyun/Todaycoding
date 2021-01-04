@@ -200,6 +200,114 @@ get_question_title_by_qno("Q7")
 
 # show_multiple_choice_bar_plot_by_qno("Q7")
 
+Q8 What programming language would you recommend an aspiring data scientist to learn first? - Selected Choice
+question.index
+
+def show_plot_by_qno(qno): # 여태 만들었던 함수들을 조건문으로 하여서 단일,다중변수둘다 상관없이 그래프를 그리는 함수를 작성 
+    if qno in question.index:
+        show_countplot_by_qno(qno)
+    else:
+        show_multiple_choice_bar_plot_by_qno(qno)
+
+show_plot_by_qno("Q8")  
+
+Q9 Which of the following integrated development environments (IDE's) do you use on a regular basis? (Select all that apply)
+show_plot_by_qno("Q9")
+
+arrow_upward
+
+arrow_downward
+
+delete
+
+unfold_less
+
+more_vert
+Q10 Which of the following hosted notebook products do you use on a regular basis? (Select all that apply)
+show_plot_by_qno("Q10")
+
+Q11 What type of computing platform do you use most often for your data science projects? - Selected Choice
+show_plot_by_qno("Q11")
+
+Q12 Which types of specialized hardware do you use on a regular basis?
+show_plot_by_qno("Q12")
+
+Q13 🧮 Approximately how many times have you used a TPU (tensor processing unit)?
+show_plot_by_qno("Q13")
+
+Q14 🎨 What data visualization libraries or tools do you use on a regular basis? (Select all that apply)
+show_plot_by_qno("Q14")
+
+Q15 For how many years have you used machine learning methods?
+show_plot_by_qno("Q15")
+
+Q16 Which of the following machine learning frameworks do you use on a regular basis? (Select all that apply)
+show_plot_by_qno("Q16")
+
+arrow_upward
+
+arrow_downward
+
+delete
+
+unfold_less
+
+more_vert
+Q17 Which of the following ML algorithms do you use on a regular basis? (Select all that apply):
+show_plot_by_qno("Q17")
+
+Q18 Which categories of computer vision methods do you use on a regular basis? (Select all that apply)
+show_plot_by_qno("Q18")
+
+Q19 📚 Which of the following natural language processing (NLP) methods do you use on a regular basis? (Select all that apply)
+show_plot_by_qno("Q19")
+
+Q20 🏢 What is the size of the company where you are employed?
+show_plot_by_qno("Q20")
+
+Q21 Approximately how many individuals are responsible for data science workloads at your place of business?
+show_plot_by_qno("Q21")
+
+Q22 Does your current employer incorporate machine learning methods into their business?
+show_plot_by_qno("Q22")
+
+Q23 Select any activities that make up an important part of your role at work: (Select all that apply)
+show_plot_by_qno("Q23")
+
+Q24 What is your current yearly compensation (approximate $USD)
+show_plot_by_qno("Q24")
+
+q24_count = answer["Q24"].value_counts().reset_index()
+q24_count.columns = ["range", "count"]
+q24_count.sort_values("range") 
+# 원하는 내림차순으로 정렬이 안됨 why? range안에 값이 문자여서
+
+q24_count["min"]=q24_count["range"].str.split("-",expand=True)[0]
+q24_count["max"]=q24_count["range"].str.split("-",expand=True)[1]
+q24_count["min"] = q24_count["min"].str.replace(",|\$|>","").astype(int)
+q24_count=q24_count.sort_values("min")
+# str에서 -를 통해서 split 해준다
+# expand=True 0,1번째 리스트인 데이터프레임형태로 구분해줌.
+# q24_count["min"]에서 ,를 ""(빈칸)으로 바꿔주고 
+# |의 의미는 또는 \$ 달러표시 삭제(그냥 $ 는 정규표현식에서 끝이라는 뜻이기 때문에)
+# 완료되면 특수문자들이 다 사라짐.
+plt.figure(figsize=(10,6))
+sns.barplot(data=q24_count,y="range",x="count")
+
+q24_cols = q24_count.range.tolist()
+q3_usa = answer[answer["Q3"].isin(["United States of America"])] # 나라를 바꾸면 해당나라만 가능
+plt.figure(figsize=(10,6))
+sns.countplot(data=q3_usa, y="Q24", order=q24_cols)
+# 미국에서 응답한 값만 추출
+# order q24_cols 임금순으로 설정
+
+
+
+
+
+
+
+
 
 
 
