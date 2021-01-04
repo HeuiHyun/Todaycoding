@@ -62,6 +62,14 @@ Q2
 sns.countplot(data=answer, 
               y=question_no).set_title(question[question_no])
 
+# answer["Q1"].value_counts() # value_counts 시리즈에서만 빈도수 셈 
+q1q2 = pd.crosstab(answer["Q1"],answer["Q2"]) # pandas의 crosstab을 이용하면 양쪽의 빈도수 확인 가능
+q1q2[["Man","Woman"]].sort_index(ascending=False).plot.barh() 
+# []하나일때는 시리즈형태로 [[]] 일때는 데이터프레임형태로 보여준다.
+# .plot = 직선 .bar 막대형태 rot=o 글자가 눕지 않음 barh y축으로 막대그래프
+# sort_index 에서 (ascending=False) 하면 오름차순 내림차순 차이
+# sort_values 컬럼값 기준으로 정렬
+
 q1q2 = pd.crosstab(answer["Q1"], answer["Q2"])
 q1q2[["Man", "Woman"]].plot.bar(rot=0)
 
@@ -147,15 +155,47 @@ q7_title = question.filter(regex="Q7")[0].split("-")[0]
 sns.barplot(data=answer_Q7_count, 
             y=answer_Q7_count.index, x="count", palette="Blues_r").set_title(q7_title)
 
+define get_question_title function
+# def get_question_title_by_qno(qno): # Q7부터 오류처리가 나므로 오류구문 사용해도되고
+#     try:
+#         return question[qno]
+#     except:
+#         return qno
 
+# get_question_title_by_qno("Q7") 
+# 밑에 처럼 조건문도 가능
+def get_question_title_by_qno(qno): # 
+    if qno in question.index:
+        return question[qno]
+    else:
+        q_no=question.filter(regex=qno)[0].split("-")[0]
+        return q_no
+    
+get_question_title_by_qno("Q7") 
 
+🗂 define get_multiple_choice_answer
+# def get_multiple_choice_answer_by_qno(qno):
+#     df_answer = answer.filter(regex=qno)
+#     answer_desc = df_answer.describe()
+#     answer_count = answer_desc.loc[["top","count"]].T.set_index("top") # 행 인데스로 loc사용하고 top값을 변수로 정의(set.index)
+#     answer_count = answer_count.sort_values(by="count",ascending=False) # 빈도수가 높은 값순으로 반환(ascending=False)
+#     return answer_count
 
+# get_multiple_choice_answer_by_qno("Q7")
 
+📊 define show_multiple_choice_bar_plot_by_qno function
 
+# def show_multiple_choice_bar_plot_by_qno(qno):
+#     multiple_choice_answer = get_multiple_choice_answer_by_qno(qno)
+    
+#     plt.figure(figsize=(10,6)) # 그림 크기
+#     sns.barplot(data=multiple_choice_answer,
+#                 y=multiple_choice_answer.index,
+#                 x="count", 
+#                 palette="Blues_r").set_title(get_question_title_by_qno(qno))
+    
 
-
-
-
+# show_multiple_choice_bar_plot_by_qno("Q7")
 
 
 
