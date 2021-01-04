@@ -69,6 +69,9 @@ q1q2[["Man","Woman"]].sort_index(ascending=False).plot.barh()
 # .plot = 직선 .bar 막대형태 rot=o 글자가 눕지 않음 barh y축으로 막대그래프
 # sort_index 에서 (ascending=False) 하면 오름차순 내림차순 차이
 # sort_values 컬럼값 기준으로 정렬
+# 또는 seaborn 거로도 사용가능
+plt.figure(figsize=(10,6))
+sns.countplot(data=answer.sort_values("Q1"),x="Q1",hue="Q2").set_title("Age & Gender") # hue Q2로 다르게표시
 
 q1q2 = pd.crosstab(answer["Q1"], answer["Q2"])
 q1q2[["Man", "Woman"]].plot.bar(rot=0)
